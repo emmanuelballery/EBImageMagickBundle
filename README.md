@@ -19,7 +19,7 @@ $imageMagick->convertAsync($image, '/path/to/a/non/existing/png/image');
 $imageMagick->convertAsync($image, '/path/to/a/non/existing/bmp/image');
 
 // Create an animated GIF with a delay
-// of 0.1 sencond which will loop 2 times
+// of 0.1 second which will loop 2 times
 // and wait for a resulting image
 $animatedGifImage = $imageMagick->generateAnimatedGif(array(
     $image,
@@ -29,7 +29,7 @@ $animatedGifImage = $imageMagick->generateAnimatedGif(array(
 ), '/path/to/a/non/existing/gif/image', 0.1, 2);
 
 // Create an animated GIF with a delay
-// of 0.1 sencond which will loop 2 times
+// of 0.1 second which will loop 2 times
 // but don't wait
 $animatedGifImage = $imageMagick->generateAnimatedGifAsync(array(
     $image,
