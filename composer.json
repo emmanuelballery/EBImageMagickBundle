@@ -1,0 +1,32 @@
+{
+    "name": "emmanuelballery/eb-imagemagickbundle",
+    "description": "EBImageMagickBundle",
+    "homepage": "https://github.com/emmanuelballery/EBImageMagickBundle.git",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/emmanuelballery/EBImageMagickBundle.git"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Emmanuel BALLERY",
+            "email": "emmanuel.ballery@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/filesystem": "*",
+        "symfony/process": "*",
+        "psr/log": "*",
+        "symfony/http-foundation": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "EB\\EBImageMagickBundle": ""
+        }
+    },
+    "target-dir": "EB/EBImageMagickBundle"
+}
