@@ -1,0 +1,4 @@
+EBImageMagickBundle
+===================
+
+EBImageMagickBundle
