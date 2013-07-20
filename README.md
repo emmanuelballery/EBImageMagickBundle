@@ -5,10 +5,11 @@ EBImageMagickBundle
 <?php
 // SomeController.php
 
-use EB\ImageMagickBundle\Image;
+use EB\ImageMagickBundle\ImageMagick;
+use Symfony\Component\HttpFoundation\File\File;
 
 $imageMagick = $this->get('eb_imagemagick.imagemagick');
-$image = new Image('/path/to/a/valid/image');
+$image = new File('/path/to/a/valid/image');
 
 // Convert and wait for a resulting image
 $pngImage = $imageMagick->convert($image, '/path/to/a/non/existing/png/image');

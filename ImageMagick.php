@@ -4,6 +4,7 @@ namespace EB\ImageMagickBundle;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Process\Process;
 
 /**
@@ -50,34 +51,34 @@ class ImageMagick
     }
 
     /**
-     * @param Image       $image      Source image
+     * @param File        $image      Source image
      * @param string      $targetFile Target file path
      *
-     * @return Image|null
+     * @return File|null
      */
-    public function convert(Image $image, $targetFile)
+    public function convert(File $image, $targetFile)
     {
         return $this->doConvert($image, $targetFile);
     }
 
     /**
-     * @param Image       $image      Source image
+     * @param File        $image      Source image
      * @param string      $targetFile Target file path
      *
      * @return bool
      */
-    public function convertAsync(Image $image, $targetFile)
+    public function convertAsync(File $image, $targetFile)
     {
         return $this->doConvert($image, $targetFile, true);
     }
 
     /**
-     * @param Image[]       $images     Source images
+     * @param File[]        $images     Source images
      * @param string        $targetFile Target file path
      * @param float         $second     Seconds between two frames
      * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      *
-     * @return Image|null
+     * @return File|null
      */
     public function generateAnimatedGif(array $images, $targetFile, $second = 0.1, $loop = 0)
     {
@@ -85,7 +86,7 @@ class ImageMagick
     }
 
     /**
-     * @param Image[]       $images     Source images
+     * @param File[]        $images     Source images
      * @param string        $targetFile Target file path
      * @param float         $second     Seconds between two frames
      * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
@@ -98,13 +99,13 @@ class ImageMagick
     }
 
     /**
-     * @param Image       $image      Source image
+     * @param File        $image      Source image
      * @param string      $targetFile Target file path
      * @param bool        $async      Wether this process has to be done asynchronously
      *
-     * @return bool|Image|null
+     * @return bool|File|null
      */
-    private function doConvert(Image $image, $targetFile, $async = false)
+    private function doConvert(File $image, $targetFile, $async = false)
     {
         // Prepare the target directory
         $fs = new Filesystem();
@@ -128,23 +129,23 @@ class ImageMagick
             return $process->isSuccessful();
         }
 
-        return $process->isSuccessful() ? new Image($targetFile, true) : null;
+        return $process->isSuccessful() ? new File($targetFile, true) : null;
     }
 
     /**
-     * @param Image[]         $images     Source images
+     * @param File[]          $images     Source images
      * @param string          $targetFile Target file path
      * @param float           $second     Seconds between two frames
      * @param int             $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      * @param bool            $async      Wether this process has to be done asynchronously
      *
-     * @return bool|Image|null
+     * @return bool|File|null
      */
     private function doGenerateAnimatedGif(array $images, $targetFile, $second = 0.1, $loop = 0, $async = false)
     {
         // Clean entry data
         $cleanedImages = array_filter(array_map(function ($image) {
-            if ($image instanceof Image && $image->isReadable()) {
+            if ($image instanceof File && $image->isReadable()) {
                 return $image;
             }
 
@@ -180,7 +181,7 @@ class ImageMagick
             return $process->isSuccessful();
         }
 
-        return $process->isSuccessful() ? new Image($targetFile, true) : null;
+        return $process->isSuccessful() ? new File($targetFile, true) : null;
     }
 
     /**
