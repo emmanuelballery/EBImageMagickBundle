@@ -31,7 +31,7 @@ $animatedGifImage = $imageMagick->generateAnimatedGif(array(
 // Create an animated GIF with a delay
 // of 0.1 second which will loop 2 times
 // but don't wait
-$animatedGifImage = $imageMagick->generateAnimatedGifAsync(array(
+$imageMagick->generateAnimatedGifAsync(array(
     $image,
     $image,
     $image,
