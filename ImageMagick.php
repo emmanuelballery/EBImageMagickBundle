@@ -51,137 +51,127 @@ class ImageMagick
     }
 
     /**
-     * @param File        $image      Source image
+     * @param File        $file       Source image
      * @param string      $targetFile Target file path
      *
-     * @return File|null
+     * @return File|File[]|null
      */
-    public function convert(File $image, $targetFile)
+    public function convert(File $file, $targetFile)
     {
-        return $this->doConvert($image, $targetFile);
+        return $this->doConvert($file, $targetFile);
     }
 
     /**
-     * @param File        $image      Source image
+     * @param File        $file       Source image
      * @param string      $targetFile Target file path
      *
      * @return bool
      */
-    public function convertAsync(File $image, $targetFile)
+    public function convertAsync(File $file, $targetFile)
     {
-        return $this->doConvert($image, $targetFile, true);
+        return $this->doConvert($file, $targetFile, array(), true);
     }
 
     /**
-     * @param File[]        $images     Source images
+     * @param File[]        $files      Source images
      * @param string        $targetFile Target file path
-     * @param float         $second     Seconds between two frames
+     * @param float         $delay      Seconds between two frames
      * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      *
      * @return File|null
      */
-    public function generateAnimatedGif(array $images, $targetFile, $second = 0.1, $loop = 0)
+    public function generateAnimatedGif(array $files, $targetFile, $delay = 0.1, $loop = 0)
     {
-        return $this->doGenerateAnimatedGif($images, $targetFile, $second, $loop);
+        return $this->doConvert($files, $targetFile, array(
+            'delay' => $delay,
+            'loop' => $loop,
+        ));
     }
 
     /**
-     * @param File[]        $images     Source images
+     * @param File[]        $files      Source images
      * @param string        $targetFile Target file path
-     * @param float         $second     Seconds between two frames
+     * @param float         $delay      Seconds between two frames
      * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      *
      * @return bool
      */
-    public function generateAnimatedGifAsync(array $images, $targetFile, $second = 0.1, $loop = 0)
+    public function generateAnimatedGifAsync(array $files, $targetFile, $delay = 0.1, $loop = 0)
     {
-        return $this->doGenerateAnimatedGif($images, $targetFile, $second, $loop, true);
+        return $this->doConvert($files, $targetFile, array(
+            'delay' => $delay,
+            'loop' => $loop,
+        ), true);
     }
 
     /**
-     * @param File        $image      Source image
-     * @param string      $targetFile Target file path
-     * @param bool        $async      Wether this process has to be done asynchronously
+     * @param File|File[]        $sources    Source images
+     * @param string             $targetFile Target file path
+     * @param array              $options    Convert command options
+     * @param bool               $async      Wether this process has to be done asynchronously
      *
-     * @return bool|File|null
+     * @return bool|null|File|File[]
      */
-    private function doConvert(File $image, $targetFile, $async = false)
+    private function doConvert($sources, $targetFile, array $options = array(), $async = false)
     {
-        // Prepare the target directory
-        $fs = new Filesystem();
-        $fs->mkdir(pathinfo($targetFile, PATHINFO_DIRNAME));
-
-        // Prepare command
-        $command = sprintf(
-            $async ? '%s "%s" "%s" > /dev/null 2>/dev/null &' : '%s "%s" "%s"',
-            $this->command,
-            $image->getRealPath(),
-            $targetFile
-        );
-        $this->debug('Command %s', $command);
-
-        // Launch process
-        $process = new Process($command);
-        $process->run();
-
-        // Return appropriate result
-        if ($async) {
-            return $process->isSuccessful();
+        // Multiple files in entry
+        if (!is_array($sources)) {
+            $sources = array($sources);
         }
-
-        return $process->isSuccessful() ? new File($targetFile, true) : null;
-    }
-
-    /**
-     * @param File[]          $images     Source images
-     * @param string          $targetFile Target file path
-     * @param float           $second     Seconds between two frames
-     * @param int             $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
-     * @param bool            $async      Wether this process has to be done asynchronously
-     *
-     * @return bool|File|null
-     */
-    private function doGenerateAnimatedGif(array $images, $targetFile, $second = 0.1, $loop = 0, $async = false)
-    {
-        // Clean entry data
-        $cleanedImages = array_filter(array_map(function ($image) {
-            if ($image instanceof File && $image->isReadable()) {
-                return $image;
+        $files = array_filter(array_map(function ($file) {
+            if ($file instanceof File && $file->isReadable()) {
+                return $file;
             }
 
             return null;
-        }, $images));
-
-        // Ensure entry images are valid
-        if (0 === count($images) || count($images) !== count($cleanedImages)) {
-            return $async ? false : null;
-        }
+        }, $sources));
 
         // Prepare the target directory
         $fs = new Filesystem();
         $fs->mkdir(pathinfo($targetFile, PATHINFO_DIRNAME));
 
         // Prepare command
-        $command = sprintf('%s -delay %F -loop %u', $this->command, $second, $loop);
-        foreach ($images as $image) {
-            $command .= sprintf(' "%s"', $image->getRealPath());
+        $args = array();
+        $args[] = $this->command;
+        foreach ($files as $file) {
+            $args[] = sprintf('"%s"', $file->getRealPath());
         }
-        $command .= sprintf(' "%s"', $targetFile);
+        foreach ($options as $key => $value) {
+            $args[] = sprintf(' -%s %s', $key, $value);
+        }
+        $args[] = sprintf('"%s"', $targetFile);
         if ($async) {
-            $command .= ' > /dev/null 2>/dev/null &';
+            $args[] = '> /dev/null 2>/dev/null &';
         }
+        $command = implode(' ', $args);
         $this->debug('Command %s', $command);
 
         // Launch process
         $process = new Process($command);
         $process->run();
 
-        // Return appropriate result
+        // Return async result
         if ($async) {
             return $process->isSuccessful();
         }
 
-        return $process->isSuccessful() ? new File($targetFile, true) : null;
+        // No actual result
+        if (false === $process->isSuccessful()) {
+            return null;
+        }
+
+        // One to One
+        if (file_exists($targetFile)) {
+            return new File($targetFile);
+        }
+
+        // One to Many
+        $infos = pathinfo($targetFile);
+        $pattern = sprintf('%s/%s-*.%s', $infos['dirname'], $infos['filename'], $infos['extension']);
+
+        return array_map(function ($filePath) {
+            return new File($filePath);
+        }, glob($pattern));
     }
 
     /**
