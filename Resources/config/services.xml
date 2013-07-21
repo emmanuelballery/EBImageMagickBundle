@@ -4,11 +4,16 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="eb_imagemagick.imagemagick.class">EB\ImageMagickBundle\ImageMagick</parameter>
+        <parameter key="eb_imagemagick.twig.extension.imagemagick.class">EB\ImageMagickBundle\Twig\Extension\ImageMagickExtension</parameter>
     </parameters>
     <services>
         <service id="eb_imagemagick.imagemagick" class="%eb_imagemagick.eb_imagemagick.class%">
             <argument>%eb_imagemagick.command.convert%</argument>
             <argument id="logger" type="service"/>
+        </service>
+        <service id="eb_imagemagick.twig.extension.imagemagick" class="%eb_imagemagick.twig.extension.imagemagick.class%">
+            <argument id="eb_imagemagick.imagemagick" type="service"/>
+            <tag name="twig.extension"/>
         </service>
     </services>
 </container>
