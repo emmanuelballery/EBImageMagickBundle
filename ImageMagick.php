@@ -18,7 +18,10 @@ class ImageMagick
      * @var string
      */
     private $command;
-
+    /**
+     * @var Filesystem
+     */
+    private $fs;
     /**
      * @var LoggerInterface
      */
@@ -26,11 +29,13 @@ class ImageMagick
 
     /**
      * @param string          $command ImageMagick convert command on this specific machine
+     * @param Filesystem      $fs      Filesystem
      * @param LoggerInterface $logger  Logger
      */
-    public function __construct($command, LoggerInterface $logger = null)
+    public function __construct($command, Filesystem $fs, LoggerInterface $logger = null)
     {
         $this->command = $command;
+        $this->fs = $fs;
         $this->logger = $logger;
     }
 
@@ -43,11 +48,11 @@ class ImageMagick
     {
         $which = new Process('which "convert"');
         $which->run();
-        if ('' == $convertCommand = trim($which->getOutput())) {
-            return null;
+        if ($which->isSuccessful()) {
+            return trim($which->getOutput());
         }
 
-        return $convertCommand;
+        return null;
     }
 
     /**
@@ -127,8 +132,7 @@ class ImageMagick
         }, $sources));
 
         // Prepare the target directory
-        $fs = new Filesystem();
-        $fs->mkdir(pathinfo($targetFile, PATHINFO_DIRNAME));
+        $this->fs->mkdir(pathinfo($targetFile, PATHINFO_DIRNAME));
 
         // Prepare command
         $args = array();

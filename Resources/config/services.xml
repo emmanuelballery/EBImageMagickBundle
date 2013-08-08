@@ -9,6 +9,7 @@
     <services>
         <service id="eb_imagemagick.imagemagick" class="%eb_imagemagick.eb_imagemagick.class%">
             <argument>%eb_imagemagick.command.convert%</argument>
+            <argument id="filesystem" type="service"/>
             <argument id="logger" type="service"/>
         </service>
         <service id="eb_imagemagick.twig.extension.imagemagick" class="%eb_imagemagick.twig.extension.imagemagick.class%">
