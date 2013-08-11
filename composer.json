@@ -28,5 +28,5 @@
             "EB\\EBImageMagickBundle": ""
         }
     },
-    "target-dir": "EB/EBImageMagickBundle"
+    "target-dir": "EB/ImageMagickBundle"
 }
