@@ -1,7 +1,8 @@
 EBImageMagickBundle
 ===================
 
-Linux only ?
+This bundle is an example. It lets developpers work with images,
+using the image magick convert command on Linux OS.
 
 ``` php
 <?php
