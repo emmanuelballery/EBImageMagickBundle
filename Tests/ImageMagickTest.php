@@ -4,7 +4,6 @@ namespace EB\ImageMagickBundle\Tests;
 
 use EB\ImageMagickBundle\ImageMagick;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Process\Process;
 
 /**
  * Class ImageMagickTest
