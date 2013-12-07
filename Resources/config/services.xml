@@ -7,7 +7,7 @@
         <parameter key="eb_imagemagick.twig.extension.imagemagick.class">EB\ImageMagickBundle\Twig\Extension\ImageMagickExtension</parameter>
     </parameters>
     <services>
-        <service id="eb_imagemagick.imagemagick" class="%eb_imagemagick.eb_imagemagick.class%">
+        <service id="eb_imagemagick.imagemagick" class="%eb_imagemagick.imagemagick.class%">
             <argument>%eb_imagemagick.command.convert%</argument>
             <argument id="filesystem" type="service"/>
             <argument id="logger" type="service"/>
