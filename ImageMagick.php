@@ -56,8 +56,8 @@ class ImageMagick
     }
 
     /**
-     * @param File        $file       Source image
-     * @param string      $targetFile Target file path
+     * @param File   $file       Source image
+     * @param string $targetFile Target file path
      *
      * @return File|File[]|null
      */
@@ -67,8 +67,8 @@ class ImageMagick
     }
 
     /**
-     * @param File        $file       Source image
-     * @param string      $targetFile Target file path
+     * @param File   $file       Source image
+     * @param string $targetFile Target file path
      *
      * @return bool
      */
@@ -78,10 +78,10 @@ class ImageMagick
     }
 
     /**
-     * @param File[]        $files      Source images
-     * @param string        $targetFile Target file path
-     * @param float         $delay      Seconds between two frames
-     * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
+     * @param File[] $files      Source images
+     * @param string $targetFile Target file path
+     * @param float  $delay      Seconds between two frames
+     * @param int    $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      *
      * @return File|null
      */
@@ -94,10 +94,10 @@ class ImageMagick
     }
 
     /**
-     * @param File[]        $files      Source images
-     * @param string        $targetFile Target file path
-     * @param float         $delay      Seconds between two frames
-     * @param int           $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
+     * @param File[] $files      Source images
+     * @param string $targetFile Target file path
+     * @param float  $delay      Seconds between two frames
+     * @param int    $loop       Wether this animation has to loop and how many times (0 will loop infinitly)
      *
      * @return bool
      */
@@ -110,10 +110,10 @@ class ImageMagick
     }
 
     /**
-     * @param File|File[]        $sources    Source images
-     * @param string             $targetFile Target file path
-     * @param array              $options    Convert command options
-     * @param bool               $async      Wether this process has to be done asynchronously
+     * @param File|File[] $sources    Source images
+     * @param string      $targetFile Target file path
+     * @param array       $options    Convert command options
+     * @param bool        $async      Wether this process has to be done asynchronously
      *
      * @return bool|null|File|File[]
      */
@@ -123,6 +123,8 @@ class ImageMagick
         if (!is_array($sources)) {
             $sources = array($sources);
         }
+
+        /** @var File[] $files */
         $files = array_filter(array_map(function ($file) {
             if ($file instanceof File && $file->isReadable()) {
                 return $file;
