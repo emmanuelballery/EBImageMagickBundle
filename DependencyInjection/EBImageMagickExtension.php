@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
- * Class EBImagImageMagickExtension
+ * Class EBImageMagickExtension
  *
  * @author "Emmanuel BALLERY" <emmanuel.ballery@gmail.com>
  */
@@ -22,15 +22,13 @@ class EBImageMagickExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         // Search for "convert" command
-        if (null === $convertCommand = ImageMagick::getLocalCommand()) {
-            throw new InvalidConfigurationException('Local command "convert" not found.');
+        if (null !== $convertCommand = ImageMagick::getLocalCommand()) {
+            // Add it for our service to find
+            $container->setParameter('eb_imagemagick.command.convert', $convertCommand);
+
+            // Load rest of our bundle
+            $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+            $loader->load('services.xml');
         }
-
-        // Add it for our service to find
-        $container->setParameter('eb_imagemagick.command.convert', $convertCommand);
-
-        // Load rest of our bundle
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
     }
 }
